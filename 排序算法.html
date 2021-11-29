@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+  />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+  <title>排序算法</title>
+</head>
+<body>
+<script>
+  function ArrayList() {
+    this.list = [];
+
+    ArrayList.prototype.insert = function (item) {
+      this.list.push(item);
+    };
+
+    ArrayList.prototype.toString = function () {
+      return this.list.join(" - ");
+    };
+
+    ArrayList.prototype.swap = function (a, b) {
+      const temp = this.list[a];
+      this.list[a] = this.list[b];
+      this.list[b] = temp;
+    };
+
+    ArrayList.prototype.bubblesSort = function () {
+      let length = this.list.length;
+      //排序需要比较
+      //排序N个数字，只需要N-1轮
+      for (let i = 0; i < length - 1; i++) {
+        //比较大小，只需要减去已排序好的和不需要排序的那一个
+        for (let j = 0; j < length - i - 1; j++) {
+          console.log(1);
+          if (this.list[j] > this.list[j + 1]) {
+            this.swap(j, j + 1);
+          }
+        }
+      }
+
+      //排序需要比较
+      //排序N个数字，只需要N-1轮
+      for (let i = length - 1; i >= 0; i--) {
+        //比较大小，只需要减去已排序好的和不需要排序的那一个
+        for (let j = 0; j < i; j++) {
+          if (this.list[j] > this.list[j + 1]) {
+            this.swap(j, j + 1);
+          }
+        }
+      }
+    };
+
+    ArrayList.prototype.selectSort = function () {
+      let length = this.list.length;
+      //排序需要排N-1次
+      for (let i = 0; i < length - 1; i++) {
+        //假设i的位置是最小的
+        let min = i;
+        //从i+1开始对比到最后
+        //冒泡为什么要-1。因为冒泡是需要交换的。自己跟自己交换没意义。而这里是比较，min+1就去除了自己比较自己的情况
+        //也就是其实都去除了自己跟自己的操作。
+        for (let j = min + 1; j < length; j++) {
+          console.log(1);
+          //比较后记录min的新位置
+          if (this.list[min] > this.list[j]) {
+            min = j;
+          }
+        }
+        //得到min的位置就交换.只有这里交换了。省交换次数。
+        this.swap(i, min);
+      }
+    };
+
+    ArrayList.prototype.insertionSort = function () {
+      const length = this.list.length;
+      for (let i = 1; i < length; i++) {
+        //记录新元素的值
+        let temp = this.list[i];
+        //记录新元素的位置
+        let j = i;
+        //排序好的数字跟temp比较。跟temp比较！！！！因为代码块不是交换。所以不能跟this.list[j]比较
+        while (j > 0 && temp < this.list[j - 1]) {
+          console.log(1);
+          //使用赋值比交换效率高。交换一次要赋值两次。
+          this.list[j] = this.list[j - 1];
+          //将新元素的位置往前移
+          j--;
+        }
+        //给得到的位置赋值
+        this.list[j] = temp;
+      }
+    };
+
+    ArrayList.prototype.shellSort = function () {
+      let length = this.list.length;
+      let gap = Math.floor(length / 2);
+      while (gap >= 1) {
+        for (let i = gap; i < length; i++) {
+          let j = i;
+          let temp = this.list[j];
+          while (temp < this.list[j - gap] && j > gap - 1) {
+            console.log(1);
+            this.list[j] = this.list[j - gap];
+            j -= gap;
+          }
+          this.list[j] = temp;
+        }
+        gap = Math.floor(gap / 2);
+      }
+    };
+
+    ArrayList.prototype.median = function (left, right) {
+      let center = Math.floor((left + right) / 2);
+      //三个if，手动冒泡排序
+      if (this.list[left] > this.list[center]) {
+        this.swap(left, center);
+      }
+      if (this.list[center] > this.list[right]) {
+        this.swap(center, right);
+      }
+      if (this.list[left] > this.list[center]) {
+        this.swap(left, center);
+      }
+      this.swap(center, right - 1);
+      return this.list[right - 1];
+    };
+
+    ArrayList.prototype.fastSort = function () {
+      return this.fast(0, this.list.length - 1);
+    };
+
+    ArrayList.prototype.fast = function (left, right) {
+      if (left >= right) return;
+      let median = this.median(left, right);
+      let i = left + 1;
+      let j = right - 2;
+      while (1) {
+        while (this.list[i] < median) {
+          i++;
+        }
+        while (this.list[j] > median) {
+          j--;
+        }
+        if (i < j) {
+          this.swap(i, j);
+        } else {
+          break;
+        }
+      }
+      this.swap(i, right - 1);
+      this.fast(left, i - 1);
+      this.fast(i + 1, right);
+    };
+  }
+
+  let list = new ArrayList();
+  list.insert(81);
+  list.insert(94);
+  list.insert(11);
+  list.insert(96);
+  list.insert(12);
+  list.insert(35);
+  list.insert(17);
+  list.insert(95);
+  list.insert(28);
+  list.insert(58);
+  list.insert(41);
+  list.insert(75);
+  list.insert(15);
+
+  list.fastSort();
+  console.log(list.toString());
+</script>
+</body>
+</html>
